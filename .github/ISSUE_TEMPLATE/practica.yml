@@ -1,0 +1,44 @@
+name: Práctica
+description: Nueva práctica de ASIO (guía GitHub de la asignatura)
+title: "Ixxx - Pn: "
+body:
+  - type: input
+    id: id_issue
+    attributes:
+      label: Id Issue
+      description: "Formato Ixxx (xxx = nº de issue). Ejemplo: I002"
+      placeholder: I002
+    validations:
+      required: true
+  - type: input
+    id: titulo
+    attributes:
+      label: Título de la práctica
+      placeholder: "P2: ..."
+    validations:
+      required: true
+  - type: textarea
+    id: tareas
+    attributes:
+      label: Descripción de las tareas a realizar
+      value: |
+        - [ ] 
+        - [ ] 
+    validations:
+      required: true
+  - type: input
+    id: rama
+    attributes:
+      label: Rama
+      description: "Formato <IdIssue>-documentacion-<Iniciales>"
+      placeholder: I002-documentacion-XX
+  - type: checkboxes
+    id: documentos
+    attributes:
+      label: Documentos (2)
+      options:
+        - label: Memoria
+        - label: Presentación
+  - type: markdown
+    attributes:
+      value: "**Recuerda:** asigna a todos los integrantes del grupo en *Assignees*. Máximo 2 revisiones."
