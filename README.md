@@ -49,7 +49,7 @@ Cada integrante instaló Ubuntu Server en una VM de VirtualBox y documentó y ju
 | **Hostname** | `server-asio-01` | `albertoserver` | `server-asio` |
 | **OpenSSH** | ✅ | ✅ | ✅ |
 
-**Entregables:** memoria del grupo (Eva, Alberto y Javier), presentación y guion (Eva) y fichero de comandos (Eva), en [`Practica_1/`](Practica_1/). El enunciado del profesor está en `Practica_1/Anexos/`.
+**Entregables:** memoria del grupo (Eva, Alberto y Javier), presentación (Eva) y fichero de comandos (Eva), en [`Practica_1/`](Practica_1/). En `Practica_1/Anexos/` están el enunciado del profesor (documento de referencia de la issue) y el guion de la presentación.
 
 ---
 
@@ -62,12 +62,12 @@ ASIO-Grupo-8/
     ├── Documentacion/
     │   └── 88020_P1_Documentacion_AGJCER.pdf # Memoria del grupo (rama I001_Documentacion_ERJ)
     ├── Presentacion/
-    │   ├── 88020_P1_Presentacion_AGJCER.pdf  # Diapositivas (rama I001_Presentacion_ERJ)
-    │   └── 88020_P1_Guion_AGJCER.pdf         # Guion de la exposición
+    │   └── 88020_P1_Presentacion_AGJCER.pdf  # Diapositivas (rama I001_Presentacion_ERJ)
     ├── Codigo/
     │   └── 88020_P1_Comandos_AGJCER.txt      # Comandos utilizados (rama I001_Codigo_ERJ)
     └── Anexos/
-        └── 88020_P1_Enunciado_AGJCER.pdf     # Enunciado del profesor (rama I001_Anexos_ERJ)
+        ├── 88020_P1_Enunciado_AGJCER.pdf     # Enunciado del profesor (rama I001_Anexos_ERJ)
+        └── 88020_P1_Guion_AGJCER.pdf         # Guion de la presentación
 ```
 ---
 
