@@ -60,14 +60,14 @@ ASIO-Grupo-8/
 ├── README.md
 └── Practica_1/
     ├── Documentacion/
-    │   └── ASIO_P1_Memoria.pdf          # Memoria del grupo (rama I001_Documentacion_ERJ)
+    │   └── 88020_P1_Documentacion_AGJCER.pdf # Memoria del grupo (rama I001_Documentacion_ERJ)
     ├── Presentacion/
-    │   ├── ASIO_P1_Presentacion.pdf     # Diapositivas (rama I001_Presentacion_ERJ)
-    │   └── ASIO_P1_Guion.pdf            # Guion de la exposición
+    │   ├── 88020_P1_Presentacion_AGJCER.pdf  # Diapositivas (rama I001_Presentacion_ERJ)
+    │   └── 88020_P1_Guion_AGJCER.pdf         # Guion de la exposición
     ├── Codigo/
-    │   └── ASIO_P1_Comandos.txt         # Comandos utilizados (rama I001_Codigo_ERJ)
+    │   └── 88020_P1_Comandos_AGJCER.txt      # Comandos utilizados (rama I001_Codigo_ERJ)
     └── Anexos/
-        └── ASSIO_P1_Enunciado.pdf       # Enunciado del profesor (rama I001_Anexos_ERJ)
+        └── 88020_P1_Enunciado_AGJCER.pdf     # Enunciado del profesor (rama I001_Anexos_ERJ)
 ```
 ---
 
@@ -85,6 +85,12 @@ ASIO-Grupo-8/
 
 ```
 issue I00x  ──►  ramas I00x_<Tipo>_XXX  ──►  commits  ──►  pull request  ──►  revisión (máx. 2)  ──►  main
+```
+
+### Nombre de los documentos
+
+```
+88020_P1_<Titulo>_AGJCER.<ext>     # Titulo = Documentacion, Presentacion, Guion, Comandos o Enunciado
 ```
 
 ### Convención de commits
