@@ -1,0 +1,132 @@
+===============================================================================
+ ADMINISTRACIÓN Y SERVICIOS DE SISTEMAS OPERATIVOS (88020)
+ Práctica 1 - Instalación de Ubuntu Server en una máquina virtual
+ Fichero de código / comandos utilizados
+ Alumna: Eva Ramos            Documento: 88020_P1_ER
+===============================================================================
+
+Entorno:
+  - Host : MacBook Air, Apple Silicon (ARM64), macOS
+  - Hipervisor : Oracle VirtualBox (versión para Apple Silicon)
+  - Guest : Ubuntu Server 26.04.1 LTS arm64
+  - ISO : ~/Downloads/ubuntu-26.04.1-live-server-arm64.iso
+
+-------------------------------------------------------------------------------
+ PARTE 1. CREACIÓN Y CONFIGURACIÓN DE LA VM (equivalente en línea de comandos)
+-------------------------------------------------------------------------------
+# La VM se creó con la interfaz gráfica de VirtualBox (ver capturas de la
+# memoria). Estos son los comandos VBoxManage equivalentes, que se ejecutarían
+# en la Terminal de macOS y reproducen la misma configuración.
+# (El identificador de --ostype puede variar según la versión de VirtualBox:
+#  consultar con "VBoxManage list ostypes").
+
+VM="Ubuntu-Server-ASSIO"
+ISO="$HOME/Downloads/ubuntu-26.04.1-live-server-arm64.iso"
+DISCO="$HOME/VirtualBox VMs/$VM/$VM.vdi"
+
+# 1) Crear y registrar la VM (plataforma ARM, perfil Ubuntu ARM 64-bit)
+VBoxManage createvm --name "$VM" --platform-architecture arm \
+    --ostype Ubuntu_arm64 --register
+
+# 2) Hardware: 2048 MB de RAM, 2 vCPU, firmware UEFI
+VBoxManage modifyvm "$VM" --memory 2048 --cpus 2 --firmware efi
+
+# 3) Disco virtual VDI de 25 GB con reserva dinámica (variant Standard)
+VBoxManage createmedium disk --filename "$DISCO" --size 25600 \
+    --format VDI --variant Standard
+
+# 4) Controlador VirtioSCSI con el disco (puerto 0) y la ISO (puerto 1)
+VBoxManage storagectl "$VM" --name "VirtioSCSI" --add virtio-scsi
+VBoxManage storageattach "$VM" --storagectl "VirtioSCSI" --port 0 --device 0 \
+    --type hdd --medium "$DISCO"
+VBoxManage storageattach "$VM" --storagectl "VirtioSCSI" --port 1 --device 0 \
+    --type dvddrive --medium "$ISO"
+
+# 5) Orden de arranque.
+#    En una VM x86 con BIOS: primero la ISO (óptica) y después el disco duro.
+#    En esta VM ARM (UEFI obligatorio) la opción "Boot Device Order" es
+#    "BIOS only": UEFI arranca desde la ISO mientras el disco está vacío.
+VBoxManage modifyvm "$VM" --boot1 dvd --boot2 disk --boot3 none --boot4 none
+
+# 6) Red: adaptador 1 en modo NAT, tarjeta Intel PRO/1000 MT Desktop (82540EM)
+VBoxManage modifyvm "$VM" --nic1 nat --nictype1 82540EM
+
+# 7) Reenvío de puertos para SSH: 127.0.0.1:2222 (Mac) -> puerto 22 (VM)
+#    Formato: "nombre,protocolo,IP_anfitrión,puerto_anfitrión,IP_invitado,puerto_invitado"
+VBoxManage modifyvm "$VM" --natpf1 "SSH,tcp,127.0.0.1,2222,,22"
+
+# 8) Arrancar la VM
+VBoxManage startvm "$VM"
+
+# 9) Tras la instalación: quitar la ISO de la unidad óptica
+#    (el instalador ya la expulsa: "Please remove the installation medium")
+VBoxManage storageattach "$VM" --storagectl "VirtioSCSI" --port 1 --device 0 \
+    --type dvddrive --medium emptydrive
+
+# Comprobar la configuración resultante
+VBoxManage showvminfo "$VM"
+
+-------------------------------------------------------------------------------
+ PARTE 2. CONFIGURACIÓN ELEGIDA EN EL INSTALADOR (Subiquity)
+-------------------------------------------------------------------------------
+# Idioma ........... Español
+# Teclado .......... Spanish / Spanish
+# Tipo ............. Ubuntu Server (no minimized)
+# Red .............. enp0s8 -> DHCPv4 10.0.2.15/24 (automático)
+# Proxy ............ (vacío)
+# Mirror ........... http://es.archive.ubuntu.com/ubuntu/
+# Almacenamiento ... Custom storage layout, disco /dev/sda (GPT), sin LVM:
+#     /dev/sda1  /boot/efi   1.049G  fat32  (ESP, "Use As Boot Device")
+#     /dev/sda2  /          14G     ext4
+#     /dev/sda3  swap       2G      swap
+#     /dev/sda4  /home      7.948G  ext4   (resto del disco)
+# Perfil ........... Nombre: Eva | Hostname: server-asio-01 | Usuario: eva
+#                    (contraseña introducida por la alumna; no se documenta)
+# Ubuntu Pro ....... Skip for now
+# SSH .............. [X] Instalar servidor OpenSSH
+# Snaps ............ ninguno
+
+-------------------------------------------------------------------------------
+ PARTE 3. COMANDOS DE VERIFICACIÓN EJECUTADOS EN EL SERVIDOR (usuario eva)
+-------------------------------------------------------------------------------
+# Hostname, sistema operativo y arquitectura
+hostnamectl
+
+# Usuario creado y sus grupos (debe aparecer el grupo sudo)
+id eva
+
+# Esquema de particiones, sistemas de archivos y puntos de montaje
+lsblk -f
+
+# Memoria RAM y swap
+free -h
+swapon --show
+
+# Espacio ocupado en cada sistema de archivos (sin los tmpfs)
+df -hT -x tmpfs
+
+# Montajes persistentes (por UUID)
+cat /etc/fstab
+
+# Configuración de red obtenida por DHCP y ruta por defecto (NAT)
+ip -4 a
+ip route
+
+# Comprobación de salida a Internet a través del NAT
+ping -c 3 ubuntu.com
+
+# Comprobación de OpenSSH Server
+dpkg -l openssh-server               # paquete instalado (estado "ii")
+systemctl status ssh --no-pager      # servicio active (running)
+ss -tln                              # puerto 22 en escucha (0.0.0.0:22 y [::]:22)
+
+-------------------------------------------------------------------------------
+ PARTE 4. ACCESO REMOTO POR SSH DESDE EL MAC (para prácticas posteriores)
+-------------------------------------------------------------------------------
+# Desde la Terminal de macOS, gracias a la regla de reenvío de puertos:
+ssh -p 2222 eva@127.0.0.1
+
+# Comandos útiles de administración básica (con sudo, no como root):
+sudo apt update && sudo apt upgrade     # actualizar el sistema
+sudo systemctl restart ssh              # reiniciar el servicio SSH
+sudo poweroff                           # apagar el servidor
