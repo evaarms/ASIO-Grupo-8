@@ -30,7 +30,7 @@ Grado en Inteligencia Artificial y Robótica · Universidad Camilo José Cela
 
 | Issue | Práctica | Rama | Estado | Documentos |
 |---|---|---|---|---|
-| [`I001`](../../issues/1) | **P1** · Instalación de Ubuntu Server en una máquina virtual | `I001_Documentacion_ERJ` · `I001_Presentacion_ERJ` · `I001_Codigo_ERJ` · `I001_Anexos_ERJ` | 🟡 En curso | [`Practica_1/`](Practica_1/) |
+| [`I001`](../../issues/1) | **P1** · Instalación de Ubuntu Server en una máquina virtual | `I001_Documentacion_ERJ` · `I001_Codigo_ERJ` | 🟡 En curso | [`Practica_1/`](Practica_1/) |
 
 ---
 
@@ -58,15 +58,15 @@ Cada integrante instaló Ubuntu Server en una VM de VirtualBox y documentó y ju
 ```
 ASIO-Grupo-8/
 ├── README.md
-└── Practica_1/
+└── Practica_1/                              # Rama I001_Documentacion_ERJ (salvo Codigo/)
     ├── Documentacion/
-    │   └── 88020_P1_Documentacion_AGJCER.pdf # Memoria del grupo (rama I001_Documentacion_ERJ)
+    │   └── 88020_P1_Documentacion_AGJCER.pdf # Memoria del grupo
     ├── Presentacion/
-    │   └── 88020_P1_Presentacion_AGJCER.pdf  # Diapositivas (rama I001_Presentacion_ERJ)
+    │   └── 88020_P1_Presentacion_AGJCER.pdf  # Diapositivas
     ├── Codigo/
     │   └── 88020_P1_Comandos_AGJCER.txt      # Comandos utilizados (rama I001_Codigo_ERJ)
     └── Anexos/
-        ├── 88020_P1_Enunciado_AGJCER.pdf     # Enunciado del profesor (rama I001_Anexos_ERJ)
+        ├── 88020_P1_Enunciado_AGJCER.pdf     # Enunciado del profesor (documento de referencia)
         └── 88020_P1_Guion_AGJCER.pdf         # Guion de la presentación
 ```
 ---
@@ -78,13 +78,15 @@ ASIO-Grupo-8/
    - Título: título de la práctica.
    - Descripción: tareas a realizar (lista de comprobación).
    - *Assignees*: **todos los integrantes del grupo**.
-2. **Ramas** (una por tipo de tarea): `<IdIssue>_<Tipo>_<Iniciales>`. Ejemplo: `I001_Documentacion_ERJ`, `I001_Presentacion_ERJ`, `I001_Codigo_ERJ`, `I001_Anexos_ERJ`.
-3. **Documentos**: la **memoria** y la **presentación** (más código y anexos), dentro de la carpeta de la práctica.
-4. **Pull request** de cada rama a `main`, titulada como la issue + tipo (p. ej. `I001 - P1: … - Documentación`), con su etiqueta: `documentation`, `presentación`, `código` o `anexos`.
+2. **Ramas** (una por tipo de tarea): `<IdIssue>_<Tipo>_<Iniciales>`.
+   - `I001_Documentacion_ERJ`: toda la documentación (memoria, presentación y anexos: enunciado y guion).
+   - `I001_Codigo_ERJ`: el código (fichero de comandos).
+3. **Documentos**: dentro de la carpeta de la práctica (`Practica_1/`).
+4. **Pull request** de cada rama a `main`, titulada como la issue + tipo (p. ej. `I001 - P1: … - Documentación`), con su etiqueta: `documentation` o `código`.
 5. **Revisión**: máximo **2 revisiones** antes de fusionar.
 
 ```
-issue I00x  ──►  ramas I00x_<Tipo>_XXX  ──►  commits  ──►  pull request  ──►  revisión (máx. 2)  ──►  main
+issue I00x  ──►  ramas I00x_<Tipo>_XXX (Documentacion · Codigo)  ──►  commits  ──►  pull request  ──►  revisión (máx. 2)  ──►  main
 ```
 
 ### Nombre de los documentos
