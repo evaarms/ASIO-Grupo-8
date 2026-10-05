@@ -1,4 +1,4 @@
-# ASIO-Grupo-8
+# ASSIO-Grupo-8
 # P1 - Instalación de Ubuntu Server en una Máquina Virtual
 
 ## Integrantes
