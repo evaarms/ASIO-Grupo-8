@@ -60,7 +60,7 @@ ASIO-Grupo-8/
 ├── README.md
 └── Practica_1/                              # Rama I001_Documentacion_ERJ (salvo Codigo/)
     ├── Documentacion/
-    │   └── 88020_P1_Documentacion_AGJCER.pdf # Memoria del grupo
+    │   └── 88020_P1_Memoria_AGJCER.pdf       # Memoria del grupo
     ├── Presentacion/
     │   └── 88020_P1_Presentacion_AGJCER.pdf  # Diapositivas
     ├── Codigo/
@@ -92,7 +92,7 @@ issue I00x  ──►  ramas I00x_<Tipo>_XXX (Documentacion · Codigo)  ──�
 ### Nombre de los documentos
 
 ```
-88020_P1_<Titulo>_AGJCER.<ext>     # Titulo = Documentacion, Presentacion, Guion, Comandos o Enunciado
+88020_P1_<Titulo>_AGJCER.<ext>     # Titulo = Memoria, Presentacion, Guion, Comandos o Enunciado
 ```
 
 ### Convención de commits
