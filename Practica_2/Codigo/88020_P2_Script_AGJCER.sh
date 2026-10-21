@@ -10,7 +10,7 @@
 H=$(hostname); B=/srv/aurora6; CRED=/root/aurora6_credenciales.txt
 R='\033[0m'; V='\033[1;32m'; Z='\033[1;34m'; M='\033[1;35m'; RJ='\033[1;31m'; AM='\033[1;33m'; C='\033[1;36m'
 
-ADMIN=$(id -un)   # ( administradora)
+ADMIN=$(id -un)   # (administradora)
 NOPERM="Acceso restringido: no dispones de los permisos necesarios"
 NOADMIN="Acceso restringido: no tienes permisos de administrador"
 # Los errores de permisos = mensaje.
