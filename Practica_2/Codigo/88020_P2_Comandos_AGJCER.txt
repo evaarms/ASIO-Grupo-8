@@ -6,25 +6,25 @@ Tras el apartado 8 la cuenta administradora es director (eva deja de tener sudo)
 de los apartados 1-7 los ejecuta la cuenta que lanza el script. Las contrasenas temporales solo se guardan en /root/aurora6_credenciales.txt (600).
 
 
-# 1) Identificacion: quien soy, donde estoy y en que equipo
+# Identificacion
 [eva] whoami; hostname; pwd
 [eva] ls /
 [eva] ls -l /home
 
-# 1) /root es el directorio del administrador
+# 1/root directorio del administrador
 [eva] ls /root
 [root] sudo ls -ld /root
 [root] sudo ls -la /root | head -5
 
-# 2) Estructura del proyecto en /srv/aurora6
+# Estructura del proyecto en /srv/aurora6
 [root] sudo mkdir -p /srv/aurora6/ingenieria/{mecanica,avionica,software} /srv/aurora6/compras/{proveedores,pedidos} /srv/aurora6/contabilidad/facturas /srv/aurora6/documentacion/comun /srv/aurora6/confidencial /srv/aurora6/intercambio/{incoming,approved,quarantine}
 [root] sudo tree -d /srv/aurora6
 
-# 3) Grupos de departamento
+# Grupos de departamento
 [root] sudo for g in mecanica avionica software compras proyecto; do getent group $g >/dev/null || groupadd $g; done
 [root] sudo getent group mecanica avionica software compras proyecto
 
-# 3) Cuentas de los responsables (contrasena temporal, cambio obligatorio)
+# Cuentas de los responsables (contrasena temporal, cambio obligatorio)
 [root] sudo usermod -aG mecanica,proyecto eva
 [root] sudo useradd -m -s /bin/bash -c 'Alberto Garcia Martin' alberto
 [root] sudo chage -d 0 alberto
@@ -35,37 +35,37 @@ de los apartados 1-7 los ejecuta la cuenta que lanza el script. Las contrasenas 
 [root] sudo ls -l /root/aurora6_credenciales.txt
 [root] sudo passwd -S alberto; passwd -S javier
 
-# 3) Comprobacion de pertenencias
+# Comprobación de pertenencias
 [root] sudo id eva
 [root] sudo id alberto
 [root] sudo id javier
 [root] sudo groups eva alberto javier
 
-# 4) documentacion: grupo proyecto y permisos 751
+# Documentacion (grupo proyecto y permisos 751)
 [root] sudo chown root:proyecto /srv/aurora6/documentacion
 [root] sudo chmod 751 /srv/aurora6/documentacion
 [root] sudo ls -ld /srv/aurora6/documentacion
 [root] sudo stat -c '%A  %a  %U:%G  %n' /srv/aurora6/documentacion
 
-# 5) Base comun: raiz, ingenieria, intercambio y confidencial
+# (raiz, ingenieria, intercambio y confidencial)
 [root] sudo chown root:proyecto /srv/aurora6 /srv/aurora6/ingenieria && chmod 750 /srv/aurora6 /srv/aurora6/ingenieria
 [root] sudo chown -R root:proyecto /srv/aurora6/intercambio && chmod -R 2770 /srv/aurora6/intercambio
 [root] sudo chown root:root /srv/aurora6/confidencial && chmod 700 /srv/aurora6/confidencial
 [root] sudo chmod 750 /srv/aurora6/documentacion
 
-# 5) Miembro A (eva): mecanica + ACL de lectura para avionica
+# Miembro A (eva)
 [root] sudo chown root:mecanica /srv/aurora6/ingenieria/mecanica && chmod 2770 /srv/aurora6/ingenieria/mecanica
 [root] sudo setfacl -m g:avionica:rx,d:g:avionica:rx,d:g:mecanica:rwx /srv/aurora6/ingenieria/mecanica
 [root] sudo getfacl -p /srv/aurora6/ingenieria/mecanica
 
-# 5) Miembro B (alberto): avionica y software + ACL de lectura para mecanica
+# Miembro B (alberto)
 [root] sudo chown root:avionica /srv/aurora6/ingenieria/avionica && chmod 2770 /srv/aurora6/ingenieria/avionica
 [root] sudo chown root:software /srv/aurora6/ingenieria/software && chmod 2770 /srv/aurora6/ingenieria/software
 [root] sudo setfacl -m g:mecanica:rx,d:g:mecanica:rx,d:g:avionica:rwx /srv/aurora6/ingenieria/avionica
 [root] sudo setfacl -m d:g:software:rwx /srv/aurora6/ingenieria/software
 [root] sudo getfacl -p /srv/aurora6/ingenieria/avionica
 
-# 5) Miembro C (javier): compras, documentacion/comun y facturas
+# Miembro C (javier)
 [root] sudo chown -R root:compras /srv/aurora6/compras && chmod -R 2770 /srv/aurora6/compras
 [root] sudo setfacl -R -m d:g:compras:rwx /srv/aurora6/compras
 [root] sudo chown root:proyecto /srv/aurora6/documentacion/comun && chmod 2750 /srv/aurora6/documentacion/comun
@@ -74,7 +74,7 @@ de los apartados 1-7 los ejecuta la cuenta que lanza el script. Las contrasenas 
 [root] sudo setfacl -m g:compras:x /srv/aurora6/contabilidad && setfacl -m g:compras:rx,d:g:compras:rx /srv/aurora6/contabilidad/facturas
 [root] sudo getfacl -p /srv/aurora6/contabilidad/facturas
 
-# 5) Acceso directo de cada responsable a su area
+# Acceso directo de cada responsable sus respectivas áreas
 [root] sudo ln -sfn /srv/aurora6/ingenieria/mecanica /home/eva/mecanica
 [root] sudo ln -sfn /srv/aurora6/ingenieria/avionica /home/alberto/avionica && ln -sfn /srv/aurora6/ingenieria/software /home/alberto/software
 [root] sudo ln -sfn /srv/aurora6/compras /home/javier/compras
@@ -83,61 +83,61 @@ de los apartados 1-7 los ejecuta la cuenta que lanza el script. Las contrasenas 
 [root] sudo echo 'Plan secreto' > /srv/aurora6/confidencial/plan_secreto.txt
 [root] sudo ls -l /srv/aurora6 /srv/aurora6/ingenieria
 
-# 6) Validacion - Miembro A: eva (Ingenieria mecanica)
+# Validación - Miembro A: eva 
 [eva] echo 'Ensayo de estructura n1' > mecanica/ensayo_estructura.txt && ls -l mecanica/
 [eva] ls /srv/aurora6/ingenieria/avionica && cat /srv/aurora6/documentacion/comun/normas_proyecto.txt
 [eva] touch /srv/aurora6/ingenieria/avionica/prueba_eva.txt
 [eva] ls /srv/aurora6/contabilidad
 [eva] ls /srv/aurora6/confidencial
 
-# 6) Validacion - Miembro B: alberto (Avionica y software)
+# Validación - Miembro B: alberto 
 [alberto] echo 'Telemetria vuelo 1' > avionica/telemetria.txt && echo 'v1.0' > software/version.txt && ls -l avionica/ software/
 [alberto] cat /srv/aurora6/ingenieria/mecanica/ensayo_estructura.txt
 [alberto] touch /srv/aurora6/ingenieria/mecanica/prueba_alberto.txt
 [alberto] ls /srv/aurora6/compras/pedidos
 [alberto] ls /srv/aurora6/confidencial
 
-# 6) Validacion - Miembro C: javier (Compras y configuracion)
+# Validación - Miembro C: javier 
 [javier] echo 'Pedido 001 - 20 placas de titanio' > compras/pedidos/pedido_001.txt && ls -l compras/pedidos/
 [javier] cat /srv/aurora6/contabilidad/facturas/factura_2026_001.txt && ls /srv/aurora6/documentacion/comun
 [javier] touch /srv/aurora6/contabilidad/facturas/nueva.txt
 [javier] touch /srv/aurora6/ingenieria/mecanica/prueba_javier.txt
 [javier] ls /srv/aurora6/confidencial
 
-# 6) getfacl de cada area (ejecutado por su responsable)
+# getfacl de cada area
 [eva] getfacl -p /srv/aurora6/ingenieria/mecanica | grep -v '^#'
 [javier] getfacl -p /srv/aurora6/contabilidad/facturas | grep -v '^#'
 
-# 6) Matriz de accesos comprobada en el sistema (L=leer, E=escribir)  (tabla generada por el script)
+# Matriz accesos comprobada (L=leer, E=escribir)
 
-# 7.1) Intercambio: flujo incoming -> approved -> quarantine con sticky bit
+# Intercambio: flujo incoming -> approved -> quarantine con sticky bit
 [root] sudo chown root:proyecto /srv/aurora6/intercambio/incoming && chmod 3770 /srv/aurora6/intercambio/incoming
 [root] sudo chown root:proyecto /srv/aurora6/intercambio/approved && chmod 2750 /srv/aurora6/intercambio/approved && setfacl -m g:compras:rwx,d:g:compras:rwx,d:g:proyecto:rx /srv/aurora6/intercambio/approved
 [root] sudo chown root:compras /srv/aurora6/intercambio/quarantine && chmod 2770 /srv/aurora6/intercambio/quarantine
 [root] sudo ls -l /srv/aurora6/intercambio
 
-# 7.1) Prueba del sticky bit: solo el autor borra su fichero
+# Prueba del sticky bit: solo el autor borra su fichero
 [eva] echo 'Plano ala v3' > /srv/aurora6/intercambio/incoming/plano_ala.txt && ls -l /srv/aurora6/intercambio/incoming
 [alberto] rm -f /srv/aurora6/intercambio/incoming/plano_ala.txt
 [javier] cp /srv/aurora6/intercambio/incoming/plano_ala.txt /srv/aurora6/intercambio/approved/ && ls -l /srv/aurora6/intercambio/approved
 [alberto] touch /srv/aurora6/intercambio/approved/prueba_alberto.txt
 [alberto] ls /srv/aurora6/intercambio/quarantine
 
-# 7.2) Copia de seguridad de permisos y ACL con getfacl -R
+# Copia de seguridad de permisos y ACL con getfacl -R
 [root] sudo getfacl -R -p /srv/aurora6 > /root/aurora6_permisos.acl && wc -l /root/aurora6_permisos.acl
 [root] sudo chmod 777 /srv/aurora6/confidencial && setfacl -b /srv/aurora6/ingenieria/mecanica
 [root] sudo ls -ld /srv/aurora6/confidencial /srv/aurora6/ingenieria/mecanica
 
-# 7.2) Restauracion con setfacl --restore
+# Restauración con setfacl --restore
 [root] sudo setfacl --restore=/root/aurora6_permisos.acl
 [root] sudo ls -ld /srv/aurora6/confidencial /srv/aurora6/ingenieria/mecanica
 [root] sudo getfacl -p /srv/aurora6/ingenieria/mecanica | grep avionica
 
-# 7.3) Plantilla /etc/skel: bienvenida para las cuentas nuevas
+# Plantilla /etc/skel: bienvenida para las cuentas nuevas
 [root] sudo printf 'Bienvenido/a al proyecto AURORA-6 (servidor %s).\nTu area de trabajo esta en /srv/aurora6.\nLa contrasena inicial es temporal: el sistema te pedira cambiarla.\n' vm > /etc/skel/LEEME_AURORA6.txt
 [root] sudo ls -l /etc/skel
 
-# 7.4) Politica de contrasenas y cuenta de becario temporal
+# Politica de contrasenas y cuenta de becario temporal
 [root] sudo chage -M 90 -m 1 -W 7 alberto && chage -M 90 -m 1 -W 7 javier
 [root] sudo chage -l alberto
 [root] sudo useradd -m -s /bin/bash -c 'Becario de documentacion' becario
@@ -146,40 +146,40 @@ de los apartados 1-7 los ejecuta la cuenta que lanza el script. Las contrasenas 
 [root] sudo setfacl -m u:becario:x /srv/aurora6 && setfacl -m u:becario:x /srv/aurora6/documentacion && setfacl -R -m u:becario:rX,d:u:becario:rX /srv/aurora6/documentacion/comun
 [root] sudo ls /home/becario
 
-# 7.4) Validacion del becario: solo lectura en documentacion/comun
+# Validación del becario: solo lectura en documentacion/comun
 [becario] cat /srv/aurora6/documentacion/comun/normas_proyecto.txt
 [becario] touch /srv/aurora6/documentacion/comun/prueba_becario.txt
 [becario] ls /srv/aurora6/ingenieria
 [becario] ls /srv/aurora6
 
-# 7.5) Informe de auditoria de /srv/aurora6
+# Informe de auditoria de /srv/aurora6
 [root] sudo { echo "Auditoria AURORA-6 - $(date +%F)"; echo '* Directorios escribibles por cualquiera:'; find /srv/aurora6 -perm -o+w; echo '* Ficheros sin propietario o grupo valido:'; find /srv/aurora6 -nouser -o -nogroup; echo '* Directorios con setgid:'; find /srv/aurora6 -type d -perm -2000 | wc -l; echo '* Ficheros y directorios con ACL:'; getfacl -R -s -p /srv/aurora6 2>/dev/null | grep -c '^# file'; echo '* Espacio por area:'; du -sh /srv/aurora6/*; } | tee /root/auditoria_aurora6.txt
 
-# 6) Matriz de accesos comprobada en el sistema (L=leer, E=escribir)  (tabla generada por el script)
+# Matriz de accesos comprobada en el sistema (L=leer, E=escribir)
 
 # Correccion: ACL por defecto en software y compras (ficheros nuevos con rw para el grupo)
 [root] sudo setfacl -m d:g:software:rwx /srv/aurora6/ingenieria/software && setfacl -R -m d:g:compras:rwx /srv/aurora6/compras
 [alberto] echo 'v1.1' > software/version2.txt && ls -l software/
 [javier] echo 'Pedido 002 - 40 tornillos' > compras/pedidos/pedido_002.txt && ls -l compras/pedidos/
 
-# 6) Matriz de accesos comprobada en el sistema (L=leer, E=escribir)  (tabla generada por el script)
+# Matriz de accesos comprobada en el sistema (L=leer, E=escribir) 
 
-# 8) Cuenta director: jefa del proyecto y unica administradora
+# Cuenta director
 [root] sudo usermod -aG sudo,proyecto,mecanica,avionica,software,compras director
 [root] sudo ln -sfn /srv/aurora6 /home/director/aurora6
 [root] sudo id director
 [root] sudo getent group sudo
 
-# 8) eva deja de ser administradora: solo responsable de mecanica
+# Usuario eva deja de ser administradora
 [root] sudo gpasswd -d eva sudo
 [root] sudo id eva; getent group sudo
 [eva] sudo -n ls /srv/aurora6/confidencial
 [root] sudo ls -l /srv/aurora6/confidencial
 
-# 6) Matriz de accesos comprobada en el sistema (L=leer, E=escribir)  (tabla generada por el script)
+# Matriz de accesos comprobada en el sistema (L=leer, E=escribir)
 
 
-# 9) Acceso remoto por SSH (fuera del script: en el Mac anfitrion y en los ordenadores de los responsables)
+# Acceso remoto por SSH 
 ## En el Mac anfitrion (Terminal de macOS); VBoxManage esta en /Applications/VirtualBox.app/Contents/MacOS/
 [mac] VBoxManage showvminfo "Ubuntu-Server-ASSIO" | grep -i rule
 [mac] VBoxManage controlvm "Ubuntu-Server-ASSIO" natpf1 delete SSH
