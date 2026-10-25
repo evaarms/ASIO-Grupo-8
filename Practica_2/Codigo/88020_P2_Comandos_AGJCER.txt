@@ -1,5 +1,6 @@
 ASSIO (88020) - Practica 2: Sistema de archivos, comandos, usuarios y permisos
-Grupo 8 - Eva Maria Ramos Juarez (A, eva), Alberto Garcia Martin (B, alberto), Javier Jiahao Cheng Hu (C, javier)
+Grupo 8 - Eva Maria Ramos Juarez, Alberto Garcia Martin, Javier Jiahao Cheng Hu.
+Usuarios - eva (A, Ingenieria mecanica), alberto (B, Avionica y software), javier (C, Compras y configuracion).
 Ejecutado en server-asio-01 (Ubuntu Server 26.04.1 LTS sobre VirtualBox). [usuario] indica quien ejecuta cada comando.
 Script completo: 88020_P2_Script_AGJCER.sh  (uso: bash 88020_P2_Script_AGJCER.sh [1-8|m|c|limpiar|todo])
 Tras el apartado 8 la cuenta administradora es director (eva deja de tener sudo); los comandos [eva] con sudo
