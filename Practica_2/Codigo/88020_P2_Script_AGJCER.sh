@@ -2,8 +2,10 @@
 # =============================================================================
 #  ASSIO (88020) - Practica 2: Sistema de archivos, comandos, usuarios y permisos
 #  Escenario AURORA Aerospace - Proyecto AURORA-6
-#  Grupo 8: Eva Maria Ramos Juarez (A), Alberto Garcia Martin (B),
-#           Javier Jiahao Cheng Hu (C)
+#  Grupo 8: Eva Maria Ramos Juarez, Alberto Garcia Martin,
+#           Javier Jiahao Cheng Hu.
+#  Usuarios: eva (A, Ingenieria mecanica), alberto (B, Avionica y software),
+#            javier (C, Compras y configuracion).
 #  Uso: bash 88020_P2_Script_AGJCER.sh [1-8|m|c|limpiar|todo]
 #  Se ejecuta con la cuenta de administracion (eva) y usa sudo.
 # =============================================================================
