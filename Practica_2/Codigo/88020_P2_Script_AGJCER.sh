@@ -206,46 +206,7 @@ p7() { # Intercambio, copia de permisos, skel, becario y auditoria
   pausa
   adm "printf 'Bienvenido/a al proyecto AURORA-6 (servidor %s).\\nTu area de trabajo esta en /srv/aurora6.\\nLa contrasena inicial es temporal: el sistema te pedira cambiarla.\\n' $H > /etc/skel/LEEME_AURORA6.txt"
   adm "ls -l /etc/skel"
-  pausa titulo "7.1) Intercambio: flujo incoming -> approved -> quarantine con sticky bit"
-  adm "chown root:proyecto $B/intercambio/incoming && chmod 3770 $B/intercambio/incoming"
-  adm "chown root:proyecto $B/intercambio/approved && chmod 2750 $B/intercambio/approved && setfacl -m g:compras:rwx,d:g:compras:rwx,d:g:proyecto:rx $B/intercambio/approved"
-  adm "chown root:compras $B/intercambio/quarantine && chmod 2770 $B/intercambio/quarantine"
-  adm "ls -l $B/intercambio"
   pausa
-  como eva "echo 'Plano ala v3' > $B/intercambio/incoming/plano_ala.txt && ls -l $B/intercambio/incoming"
-  como alberto "rm -f $B/intercambio/incoming/plano_ala.txt"
-  como javier "cp $B/intercambio/incoming/plano_ala.txt $B/intercambio/approved/ && ls -l $B/intercambio/approved"
-  como alberto "touch $B/intercambio/approved/prueba_alberto.txt"
-  como alberto "ls $B/intercambio/quarantine"
-  pausa
-  adm "getfacl -R -p $B > /root/aurora6_permisos.acl && wc -l /root/aurora6_permisos.acl"
-  adm "chmod 777 $B/confidencial && setfacl -b $B/ingenieria/mecanica"
-  adm "ls -ld $B/confidencial $B/ingenieria/mecanica"
-  printf "${AM}    (permisos rotos a proposito: confidencial abierto a todos y mecanica sin ACL)${R}\n"
-  pausa
-  adm "setfacl --restore=/root/aurora6_permisos.acl"
-  adm "ls -ld $B/confidencial $B/ingenieria/mecanica"
-  adm "getfacl -p $B/ingenieria/mecanica | grep avionica"
-  pausa
-  adm "printf 'Bienvenido/a al proyecto AURORA-6 (servidor %s).\\nTu area de trabajo esta en /srv/aurora6.\\nLa contrasena inicial es temporal: el sistema te pedira cambiarla.\\n' $H > /etc/skel/LEEME_AURORA6.txt"
-  adm "ls -l /etc/skel"
-  pausa
-  adm "chage -M 90 -m 1 -W 7 alberto && chage -M 90 -m 1 -W 7 javier"
-  adm "chage -l alberto"
-  alta becario "Becario de documentacion"
-  adm "chage -E 2026-12-31 -M 90 -W 7 becario && chage -l becario | head -4"
-  adm "setfacl -m u:becario:x $B && setfacl -m u:becario:x $B/documentacion && setfacl -R -m u:becario:rX,d:u:becario:rX $B/documentacion/comun"
-  adm "ls /home/becario"
-  pausa
-  titulo "7.4) Validacion del becario: solo lectura en documentacion/comun"
-  como becario "cat $B/documentacion/comun/normas_proyecto.txt"
-  como becario "touch $B/documentacion/comun/prueba_becario.txt"
-  como becario "ls $B/ingenieria"
-  como becario "ls $B"
-  pausa
-  adm "{ echo \"Auditoria AURORA-6 - \$(date +%F)\"; echo '* Directorios escribibles por cualquiera:'; find $B -perm -o+w; echo '* Ficheros sin propietario o grupo valido:'; find $B -nouser -o -nogroup; echo '* Directorios con setgid:'; find $B -type d -perm -2000 | wc -l; echo '* Ficheros y directorios con ACL:'; getfacl -R -s -p $B 2>/dev/null | grep -c '^# file'; echo '* Espacio por area:'; du -sh $B/*; } | tee /root/auditoria_aurora6.txt"
-  pausa
-  matriz
   adm "chage -M 90 -m 1 -W 7 alberto && chage -M 90 -m 1 -W 7 javier"
   adm "chage -l alberto"
   alta becario "Becario de documentacion" ""

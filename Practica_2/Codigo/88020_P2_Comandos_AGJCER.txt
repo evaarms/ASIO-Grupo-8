@@ -190,19 +190,19 @@ de los apartados 1-7 los ejecuta la cuenta que lanza el script. Las contrasenas 
 [mac] ssh -p 2222 eva@10.168.3.8
 [mac] ssh -p 2222 director@127.0.0.1
 [director] sudo cat /root/aurora6_credenciales.txt
-## En el ordenador del miembro B (PowerShell de Windows)
-[pc-alberto] ssh -p 2222 alberto@10.168.3.8
+## Usuario alberto desde otro ordenador (PowerShell de Windows)
+[pc-windows] ssh -p 2222 alberto@10.168.3.8
 [alberto] hostname
 [alberto] whoami
-[alberto] echo "Prueba desde el ordenador de Alberto" > avionica/remoto.txt
+[alberto] echo "Prueba remota del usuario alberto" > avionica/remoto.txt
 [alberto] ls -l avionica/
 [alberto] touch /srv/aurora6/ingenieria/mecanica/prueba.txt
 [alberto] exit
-## En el ordenador del miembro C (PowerShell de Windows)
-[pc-javier] ssh -p 2222 javier@10.168.3.8
+## Usuario javier desde otro ordenador (PowerShell de Windows)
+[pc-windows] ssh -p 2222 javier@10.168.3.8
 [javier] hostname
 [javier] whoami
-[javier] echo "Pedido desde el ordenador de Javier" > compras/pedidos/remoto.txt
+[javier] echo "Pedido remoto del usuario javier" > compras/pedidos/remoto.txt
 [javier] ls -l compras/pedidos
 [javier] touch /srv/aurora6/ingenieria/mecanica/prueba.txt
 [javier] exit
