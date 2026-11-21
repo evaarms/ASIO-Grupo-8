@@ -1,0 +1,197 @@
+ASSIO (88020) - Practica 3: Acceso remoto SSH y administracion de servicios con systemd
+Grupo 8 - Eva Maria Ramos Juarez, Alberto Garcia Martin, Javier Jiahao Cheng Hu.
+Usuarios - eva (A, structure-monitor), alberto (B, telemetry-monitor), javier (C, supply-monitor).
+Ejecutado en server-asio-01 (Ubuntu Server 26.04.1 LTS sobre VirtualBox). [usuario] indica quien ejecuta cada comando.
+Script completo: 88020_P3_Script_AGJCER.sh  (uso: bash 88020_P3_Script_AGJCER.sh [1-9|limpiar|todo])
+La administracion se hace desde la cuenta director (unica con sudo desde la P2); cada miembro abre su sesion por SSH
+desde el Mac anfitrion (NAT, puerto 2222 -> 22). No se incluyen contrasenas ni claves.
+
+
+# Instalacion scripts docente
+[mac] ls -l scripts_profesor/; file scripts_profesor/*.sh; shasum -a 256 scripts_profesor/*.sh
+[mac] scp -P 2222 scripts_profesor/*.sh director@localhost:p3_scripts/
+[director] sha256sum ~/p3_scripts/*.sh
+[director] sudo install -d -o root -g root -m 755 /opt/aurora6 /opt/aurora6/tools     (solo si no existen)
+[director] sudo install -o root -g root -m 755 ~/p3_scripts/structure-monitor.sh /opt/aurora6/tools/
+[director] sudo install -o root -g root -m 755 ~/p3_scripts/telemetry-monitor.sh /opt/aurora6/tools/
+[director] sudo install -o root -g root -m 755 ~/p3_scripts/supply-monitor.sh /opt/aurora6/tools/
+[director] sha256sum /opt/aurora6/tools/*.sh; file /opt/aurora6/tools/*.sh
+
+
+[director] whoami; hostname; date
+[director] ls -l /opt/aurora6/tools/
+[director] test -x /opt/aurora6/tools/structure-monitor.sh && echo ejecutable
+[director] test -x /opt/aurora6/tools/telemetry-monitor.sh && echo ejecutable
+[director] test -x /opt/aurora6/tools/supply-monitor.sh && echo ejecutable
+
+## En el Mac anfitrion
+[mac] VBoxManage showvminfo "Ubuntu-Server-ASSIO" --machinereadable | grep -i forwarding
+[mac] VBoxManage showvminfo "Ubuntu-Server-ASSIO" --machinereadable | grep -iE '^nic1=|^VMState='
+[mac] lsof -nP -iTCP:2222 -sTCP:LISTEN
+[mac] ipconfig getifaddr en0
+[mac] nc -vz 127.0.0.1 2222
+## En la VM
+[director] ip -br addr
+[director] ip route | head -3
+[director] ss -tlnp | grep ':22'
+
+# Sesion SSH individual
+[mac] ssh eva@localhost -p 2222
+[eva] whoami; hostname; id
+[eva] echo "$SSH_CONNECTION"
+[eva] tty; who
+[eva] echo "P3 - prueba de eva por SSH" > ~/p3_prueba_ssh.txt; ls -l ~/p3_prueba_ssh.txt
+[mac] ssh alberto@localhost -p 2222
+[alberto] whoami; hostname; id
+[alberto] echo "$SSH_CONNECTION"
+[alberto] tty; who
+[alberto] echo "P3 - prueba de alberto por SSH" > ~/p3_prueba_ssh.txt; ls -l ~/p3_prueba_ssh.txt
+[mac] ssh javier@localhost -p 2222
+[javier] whoami; hostname; id
+[javier] echo "$SSH_CONNECTION"
+[javier] tty; who
+[javier] echo "P3 - prueba de javier por SSH" > ~/p3_prueba_ssh.txt; ls -l ~/p3_prueba_ssh.txt
+
+# Gestion de servicios con systemctl 
+[director] systemctl status ssh --no-pager
+[director] systemctl is-active ssh; systemctl is-enabled ssh
+[director] systemctl status ssh.socket --no-pager
+[director] systemctl is-active ssh.socket; systemctl is-enabled ssh.socket
+[director] systemctl status cron --no-pager
+[director] sudo systemctl stop cron
+[director] systemctl is-active cron
+[director] sudo systemctl start cron
+[director] systemctl is-active cron
+[director] sudo systemctl restart cron
+[director] sudo systemctl enable cron
+[director] systemctl is-enabled cron
+
+# Servicios systemd individuales
+## Miembro A (eva) - /etc/systemd/system/structure-monitor.service
+[director] sudo tee /etc/systemd/system/structure-monitor.service <<'EOF'
+[Unit]
+Description=AURORA-6 monitor de estructura (miembro A, eva)
+After=network.target
+
+[Service]
+Type=simple
+User=eva
+ExecStart=/opt/aurora6/tools/structure-monitor.sh
+Restart=on-failure
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+EOF
+## Miembro B (alberto) - /etc/systemd/system/telemetry-monitor.service
+[director] sudo tee /etc/systemd/system/telemetry-monitor.service    (igual, User=alberto, ExecStart=/opt/aurora6/tools/telemetry-monitor.sh)
+## Miembro C (javier) - /etc/systemd/system/supply-monitor.service
+[director] sudo tee /etc/systemd/system/supply-monitor.service       (igual, User=javier, ExecStart=/opt/aurora6/tools/supply-monitor.sh)
+[director] sudo systemctl daemon-reload
+[director] sudo systemctl enable --now structure-monitor.service
+[director] systemctl status structure-monitor.service --no-pager
+[director] systemctl is-enabled structure-monitor.service
+[director] journalctl -u structure-monitor.service --since "5 minutes ago" --no-pager
+[director] sudo systemctl enable --now telemetry-monitor.service
+[director] systemctl status telemetry-monitor.service --no-pager
+[director] systemctl is-enabled telemetry-monitor.service
+[director] journalctl -u telemetry-monitor.service --since "5 minutes ago" --no-pager
+[director] sudo systemctl enable --now supply-monitor.service
+[director] systemctl status supply-monitor.service --no-pager
+[director] systemctl is-enabled supply-monitor.service
+[director] journalctl -u supply-monitor.service --since "5 minutes ago" --no-pager
+
+
+[director] systemd-analyze security structure-monitor.service --no-pager | tail -1 | sed 's/ [^[:alnum:]]*$//'   (sed quita el emoji final)
+[director] (lo mismo para telemetry-monitor y supply-monitor)
+
+# Propietario y permisos del ejecutable
+[director] namei -l /opt/aurora6/tools/structure-monitor.sh
+[director] stat -c "%U:%G %a %n" /opt/aurora6/tools/structure-monitor.sh
+[director] stat -c "%U:%G %a %n" /etc/systemd/system/structure-monitor.service
+[director] (lo mismo para telemetry-monitor y supply-monitor)
+## Solo si no es root:root 755 se corrige exclusivamente el script asignado
+[director] sudo chown root:root /opt/aurora6/tools/<script_asignado>
+[director] sudo chmod 755 /opt/aurora6/tools/<script_asignado>
+## Carpetas de la ruta (sin -R y sin 777); solo si fueran escribibles por usuarios de trabajo
+[director] stat -c "%U:%G %a %n" /opt /opt/aurora6 /opt/aurora6/tools
+[director] sudo chown root:root /opt/aurora6/tools && sudo chmod 755 /opt/aurora6/tools
+
+# Comprobacion desde la cuenta de cada rol (sin modificar el archivo)
+[eva] test -w /opt/aurora6/tools/structure-monitor.sh && echo "ALERTA: modificable" || echo "OK: sin escritura"
+[eva] test -w /opt/aurora6/tools && echo "ALERTA: carpeta modificable" || echo "OK: carpeta sin escritura"
+[eva] sudo -l
+[alberto] test -w /opt/aurora6/tools/telemetry-monitor.sh && echo "ALERTA: modificable" || echo "OK: sin escritura"
+[alberto] sudo -l
+[javier] test -w /opt/aurora6/tools/supply-monitor.sh && echo "ALERTA: modificable" || echo "OK: sin escritura"
+[javier] sudo -l
+
+# se anaden a [Service] de cada unidad
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=full
+
+# Aplicar y verificar la configuracion efectiva
+[director] sudo systemctl daemon-reload
+[director] sudo systemctl restart structure-monitor.service
+[director] systemctl show structure-monitor.service -p User -p NoNewPrivileges -p PrivateTmp -p ProtectHome -p ProtectSystem
+[director] systemctl is-active structure-monitor.service
+[director] ps -o user,pid,cmd -p $(systemctl show -p MainPID --value structure-monitor.service)
+[director] systemd-analyze security structure-monitor.service --no-pager | tail -1 | sed 's/ [^[:alnum:]]*$//'   (sed quita el emoji final)
+[director] (lo mismo para telemetry-monitor y supply-monitor)
+
+# Ampliacion: ProtectSystem=strict (simuladores solo escriben en stdout)
+[director] sudo sed -i 's/^ProtectSystem=full/ProtectSystem=strict/' /etc/systemd/system/{structure,telemetry,supply}-monitor.service
+[director] sudo systemctl daemon-reload
+[director] sudo systemctl restart structure-monitor.service telemetry-monitor.service supply-monitor.service
+[director] systemctl show structure-monitor.service -p ProtectSystem -p ReadWritePaths
+[director] systemctl is-active structure-monitor.service telemetry-monitor.service supply-monitor.service
+[director] journalctl -u structure-monitor.service -n 3 --no-pager
+[director] systemd-analyze security structure-monitor.service --no-pager | tail -1 | sed 's/ [^[:alnum:]]*$//'   (sed quita el emoji final)
+
+# Recuperacion automatica ante un fallo (para cada servicio)
+[director] systemctl show structure-monitor.service -p MainPID -p NRestarts
+[director] sudo systemctl kill --kill-who=main --signal=SIGKILL structure-monitor.service
+[director] sleep 5
+[director] systemctl status structure-monitor.service --no-pager
+[director] systemctl show structure-monitor.service -p MainPID -p NRestarts
+[director] journalctl -u structure-monitor.service --since "2 minutes ago" --no-pager
+[director] (lo mismo para telemetry-monitor y supply-monitor)
+
+# Verificacion puntual de registros
+[director] journalctl -u structure-monitor.service -n 15 --no-pager
+[director] journalctl -u telemetry-monitor.service -n 15 --no-pager
+[director] journalctl -u supply-monitor.service -n 15 --no-pager
+[director] journalctl -u ssh -n 10 --no-pager
+
+# Bloqueo del acceso directo de root por SSH (sin cerrar la sesion de director)
+[director] sudo grep -RniE '^\s*PermitRootLogin' /etc/ssh/sshd_config /etc/ssh/sshd_config.d/
+[director] sudo cp -p /etc/ssh/sshd_config /etc/ssh/sshd_config.bak_p3
+[director] sudo nano /etc/ssh/sshd_config            ->  PermitRootLogin no
+[director] sudo /usr/sbin/sshd -t
+[director] sudo systemctl reload ssh
+[director] systemctl is-active ssh.socket ssh.service
+[director] sudo /usr/sbin/sshd -T -C user=root,host=localhost,addr=127.0.0.1 | grep -i permitrootlogin
+[director] sudo passwd -S root
+[director] ssh -o BatchMode=yes root@localhost true
+[mac] ssh -p 2222 -o BatchMode=yes root@localhost true
+[director] journalctl -u ssh -n 5 --no-pager
+
+# Comprobaciones adicionales hechas en directo para las capturas
+[eva] echo prueba >> /opt/aurora6/tools/structure-monitor.sh        (Permission denied: escritura real denegada)
+[alberto] echo prueba >> /opt/aurora6/tools/telemetry-monitor.sh    (Permission denied)
+[director] sudo journalctl -u structure-monitor.service -n 15 --no-pager   (director no esta en adm/systemd-journal: sin sudo no ve los mensajes del servicio)
+
+# seguridad adicional conexiones SSH (sin cerrar sesion director)
+[director] sudo cp -p /etc/ssh/sshd_config /etc/ssh/sshd_config.bak_p3_seg
+[director] printf '# P3 - seguridad adicional de las conexiones SSH\nAllowUsers director eva alberto javier\nMaxAuthTries 3\nLoginGraceTime 30\n' | sudo tee /etc/ssh/sshd_config.d/10-p3-seguridad.conf
+[director] cat /etc/ssh/sshd_config.d/10-p3-seguridad.conf
+[director] sudo /usr/sbin/sshd -t
+[director] sudo systemctl reload ssh
+[director] sudo /usr/sbin/sshd -T | grep -iE 'allowusers|maxauthtries|logingracetime|permitrootlogin'
+[mac] ssh -p 2222 eva@localhost                (acceso permitido; igual con alberto y javier)
+[mac] ssh -o BatchMode=yes -p 2222 becario@localhost true      (rechazado: no esta en AllowUsers)
+[mac] ssh -o PubkeyAuthentication=no -p 2222 eva@localhost     (3 contrasenas incorrectas: Too many authentication failures)
+[director] sudo journalctl -u ssh --since '30 minutes ago' --no-pager | grep -iE 'AllowUsers|maximum authentication|Too many|Timeout before authentication'
+
