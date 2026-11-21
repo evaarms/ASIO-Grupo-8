@@ -6,7 +6,7 @@
 Grado en Inteligencia Artificial y Robótica · Universidad Camilo José Cela
 
 ![Asignatura](https://img.shields.io/badge/asignatura-ASIO%2088020-872046)
-![Prácticas](https://img.shields.io/badge/pr%C3%A1cticas-1%20en%20curso-872046)
+![Prácticas](https://img.shields.io/badge/pr%C3%A1cticas-2-872046)
 ![SO](https://img.shields.io/badge/Ubuntu%20Server-26.04%20LTS-E95420?logo=ubuntu&logoColor=white)
 ![VirtualBox](https://img.shields.io/badge/VirtualBox-NAT%20%2B%20SSH-183A61?logo=virtualbox&logoColor=white)
 
@@ -31,6 +31,7 @@ Grado en Inteligencia Artificial y Robótica · Universidad Camilo José Cela
 | Issue | Práctica | Rama | Estado | Documentos |
 |---|---|---|---|---|
 | [`I001`](../../issues/1) | **P1** · Instalación de Ubuntu Server en una máquina virtual | `I001_Documentacion_ERJ` · `I001_Codigo_ERJ` | 🟡 En curso | [`Practica_1/`](Practica_1/) |
+| [`I002`](../../issues/10) | **P2** · Sistema de archivos, comandos, usuarios y permisos | `I002_Documentacion_ERJ` · `I002_Codigo_ERJ` | 🟡 En curso | [`Practica_2/`](Practica_2/) |
 
 ---
 
@@ -53,21 +54,52 @@ Cada integrante instaló Ubuntu Server en una VM de VirtualBox y documentó y ju
 
 ---
 
+## 🗂️ P2 · Sistema de archivos, comandos, usuarios y permisos
+
+En esta práctica se ha preparado el servidor `server-asio-01` (Ubuntu Server 26.04.1 LTS) para el proyecto ficticio **AURORA-6** de AURORA Aerospace:
+
+* Estructura del proyecto en `/srv/aurora6` por departamentos.
+* Grupos `mecanica`, `avionica`, `software`, `compras` y `proyecto`, y cuentas de los responsables (miembros A, B y C) con contraseña temporal.
+* Permisos **DAC** (751 en `documentacion`) y política por roles con **ACL**, bit **setgid** y ACL por defecto.
+* Validación individual de cada usuario y matriz de accesos.
+* Extras: sticky bit en `intercambio`, copia y restauración de permisos, `/etc/skel`, política de contraseñas, cuenta temporal `becario`, auditoría, cuenta de dirección `director` y acceso remoto por **SSH**.
+
+| Documento | Ruta |
+|---|---|
+| Memoria | `Practica_2/Documentacion/88020_P2_Memoria_AGJCER.pdf` |
+| Presentación | `Practica_2/Presentacion/88020_P2_Presentacion_AGJCER.pdf` |
+| Guion de la presentación | `Practica_2/Anexos/88020_P2_Guion_AGJCER.pdf` |
+| Enunciado | `Practica_2/Anexos/88020_P2_Enunciado_AGJCER.pdf` |
+| Script y comandos | `Practica_2/Codigo/88020_P2_Script_AGJCER.sh` · `Practica_2/Codigo/88020_P2_Comandos_AGJCER.txt` (rama `I002_Codigo_ERJ`) |
+
+---
+
 ## 📁 Estructura del repositorio
 
 ```
 ASIO-Grupo-8/
 ├── README.md
-└── Practica_1/                              # Rama I001_Documentacion_ERJ (salvo Codigo/)
+├── Practica_1/                              # Rama I001_Documentacion_ERJ (salvo Codigo/)
+│   ├── Documentacion/
+│   │   └── 88020_P1_Memoria_AGJCER.pdf       # Memoria del grupo
+│   ├── Presentacion/
+│   │   └── 88020_P1_Presentacion_AGJCER.pdf  # Diapositivas
+│   ├── Codigo/
+│   │   └── 88020_P1_Comandos_AGJCER.txt      # Comandos utilizados (rama I001_Codigo_ERJ)
+│   └── Anexos/
+│       ├── 88020_P1_Enunciado_AGJCER.pdf     # Enunciado del profesor (documento de referencia)
+│       └── 88020_P1_Guion_AGJCER.pdf         # Guion de la presentación
+└── Practica_2/                              # Rama I002_Documentacion_ERJ (salvo Codigo/)
     ├── Documentacion/
-    │   └── 88020_P1_Memoria_AGJCER.pdf       # Memoria del grupo
+    │   └── 88020_P2_Memoria_AGJCER.pdf       # Memoria del grupo
     ├── Presentacion/
-    │   └── 88020_P1_Presentacion_AGJCER.pdf  # Diapositivas
-    ├── Codigo/
-    │   └── 88020_P1_Comandos_AGJCER.txt      # Comandos utilizados (rama I001_Codigo_ERJ)
+    │   └── 88020_P2_Presentacion_AGJCER.pdf  # Diapositivas
+    ├── Codigo/                               # Rama I002_Codigo_ERJ
+    │   ├── 88020_P2_Script_AGJCER.sh         # Script de la práctica
+    │   └── 88020_P2_Comandos_AGJCER.txt      # Comandos utilizados
     └── Anexos/
-        ├── 88020_P1_Enunciado_AGJCER.pdf     # Enunciado del profesor (documento de referencia)
-        └── 88020_P1_Guion_AGJCER.pdf         # Guion de la presentación
+        ├── 88020_P2_Enunciado_AGJCER.pdf     # Enunciado del profesor (documento de referencia)
+        └── 88020_P2_Guion_AGJCER.pdf         # Guion de la presentación
 ```
 ---
 
